@@ -3,14 +3,11 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier  # Modificato: importato DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import RepeatedKFold, learning_curve, train_test_split, cross_val_score
+from sklearn.model_selection import  learning_curve, train_test_split, cross_val_score
 from sklearn.pipeline import Pipeline
 import pandas as pd
 from sklearn.model_selection import KFold
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import time
 from sklearn.utils import resample
-from imblearn.over_sampling import SMOTE
 
 # Function to show learning curve for each model
 def plot_learning_curves(
@@ -33,11 +30,13 @@ def plot_learning_curves(
     std_train_err=np.var(train_scores, axis=1)
     std_test_err=np.var(test_scores, axis=1)
     # Stampa i risultati
-    print("deviazione standard")
+    print("deviazione standard Training")
     print(std_train_err.mean())
+    print("deviazione standard Test")
     print(std_test_err.mean())
-    print("varianza")
+    print("varianza Training")
     print(std_train_errors.mean())
+    print("varianza Test")
     print(std_test_errors.mean())
     plt.figure()
     plt.plot(train_sizes, mean_train_errors, 'o-', color='r', label='Training Error')
@@ -77,8 +76,8 @@ def returnBestHyperparameters(dataset, targetColumn):
         'RandomForest__n_jobs': [-1]
     }
     
-    gridSearchCV_reg = GridSearchCV(Pipeline([('DecisionTree', reg)]), DecisionTreeHyperparameters, cv=5, scoring='neg_mean_squared_error',verbose=2, n_jobs=-1)
-    gridSearchCV_reg1 = GridSearchCV(Pipeline([('RandomForest', reg1)]), RandomForestRegressorHyperparameters, cv=5, scoring='neg_mean_squared_error',verbose=2, n_jobs=-1)
+    gridSearchCV_reg = GridSearchCV(Pipeline([('DecisionTree', reg)]), DecisionTreeHyperparameters, cv=5, scoring='accuracy',verbose=2, n_jobs=-1)
+    gridSearchCV_reg1 = GridSearchCV(Pipeline([('RandomForest', reg1)]), RandomForestRegressorHyperparameters, cv=5, scoring='accuracy',verbose=2, n_jobs=-1)
     
 
     gridSearchCV_reg.fit(X_train, y_train)
@@ -117,7 +116,6 @@ def trainModelKFold(dataSet, targetColumn):
     }
     
     bestParameters = returnBestHyperparameters(dataSet, targetColumn)
-    print("\033[94m" + str(bestParameters) + "\033[0m")
     
     if targetColumn not in dataSet.columns:
         raise KeyError(f"The column '{targetColumn}' is not present in the dataset.")
@@ -215,8 +213,6 @@ def preprocessData(dataset):
     dataset['yearConstructed'] = pd.qcut(dataset['yearConstructed'], q=5, labels=False)
     dataset=pulizia_dataset(dataset)
     dataset=oversampling(dataset)
-    print("Dataset pulito")
-    print(dataset.head(15))
     print(dataset['Tipologia_Affitti'].value_counts())
     dataset=dataset.dropna()
     return dataset
@@ -241,24 +237,6 @@ def oversampling(dataset):
     dataset = dataset.sample(frac=1).reset_index(drop=True)
     return dataset
 
-def oversampling_smote(dataset):
-    # Definisci le feature (X) e la variabile target (y)
-    X = dataset.drop('Tipologia_Affitti', axis=1)
-    y = dataset['Tipologia_Affitti']
-    
-    # Inizializza SMOTE
-    smote = SMOTE(random_state=42)
-    
-    # Applica SMOTE per generare nuovi dati sintetici
-    X_resampled, y_resampled = smote.fit_resample(X, y)
-    
-    # Ricombina le feature e il target in un nuovo DataFrame
-    dataset_resampled = pd.concat([pd.DataFrame(X_resampled, columns=X.columns), pd.DataFrame(y_resampled, columns=['Tipologia_Affitti'])], axis=1)
-    
-    # Shuffle del dataset
-    dataset_resampled = dataset_resampled.sample(frac=1).reset_index(drop=True)
-    print(dataset_resampled['Tipologia_Affitti'].value_counts())
-    return dataset_resampled
 
 def pulizia_dataset(df):
     df=df.drop('Unnamed: 0.1', axis=1)

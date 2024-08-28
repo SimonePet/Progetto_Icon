@@ -6,7 +6,6 @@ from sklearn.metrics import mean_absolute_error, accuracy_score, precision_score
 from sklearn.model_selection import train_test_split
 import networkx as nx
 import matplotlib.pyplot as plt
-from sklearn.utils import resample
 
 def build_bayesian_network(percorso_file_dataset):
     # Carica il dataset

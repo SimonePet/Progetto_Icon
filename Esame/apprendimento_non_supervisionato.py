@@ -45,7 +45,7 @@ def apprendimento_non_supervisionato(nome_datsaset):
     optimal_clusters = regola_del_gomito(df_scaled)
     print(f"Il numero ottimale di cluster è {optimal_clusters}")
 
-    kmeans = KMeans(n_clusters=4, init='k-means++', n_init=10,random_state=42)
+    kmeans = KMeans(n_clusters=optimal_clusters, init='k-means++', n_init=10,random_state=42)
     df['Cluster'] = kmeans.fit_predict(df_scaled)
 
     # Oppure per visualizzare la distribuzione per ogni colonna numerica in base al gruppo
