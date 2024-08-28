@@ -1,4 +1,5 @@
 # Progetto_Icon
-Per eseguire il progetto scaricare l'intera cartella Esame e importarla nel proprio ambiente di sviluppo.
-Per problematiche legate alla dimensione del dataset iniziale allego il link per scaricarlo da kaggle: https://www.kaggle.com/datasets/corrieaar/apartment-rental-offers-in-germany.
-Una volta scaricato il dataset basta inserirlo nella cartella Dataset all'interno del progetto
+## Istruzioni per Eseguire il Progetto<br>
+1.Scarica l'intera cartella Esame e importala nel tuo ambiente di sviluppo.<br>
+2.A causa delle dimensioni del dataset iniziale, puoi scaricarlo direttamente da Kaggle al seguente link:https://www.kaggle.com/datasets/corrieaar/apartment-rental-offers-in-germany.<br>
+3.Dopo aver scaricato il dataset, inseriscilo nella cartella Dataset all'interno del progetto.
