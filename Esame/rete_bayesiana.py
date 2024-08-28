@@ -29,7 +29,6 @@ def build_bayesian_network(percorso_file_dataset):
 
     #discretizza il livingspace in 5 intervalli di grandezza uguale
     df['livingSpace'] = pd.qcut(df['livingSpace'], q=5, labels=False)
-    df =oversampling(df)
     #fai lo shuffle delle righe dl dataset
     df = df.sample(frac=1, random_state=42).reset_index(drop=True)
     #sostituire tutti 
@@ -74,23 +73,3 @@ def plot_bayesian_network(model):
     nx.draw(G, pos, with_labels=True, arrows=True, node_size=2000, node_color='red', font_size=10, font_weight='bold', edge_color='grey')
     plt.title("Bayesian Network Layout")
     plt.show()
-
-def oversampling(dataset):
-    df_majority = dataset[dataset['Tipologia_Affitti'] == 1]
-    df_minor1 = dataset[dataset['Tipologia_Affitti'] == 0]
-    df_minor2 = dataset[dataset['Tipologia_Affitti'] == 2]
-    # Sottocampiona la classe maggioritaria
-    df_minority_upsampled1 = resample(df_minor1,
-                                      replace=True,  # Sostituzione per permettere il campionamento ripetuto
-                                      n_samples=len(df_majority),  # Eguaglia la classe maggioritaria
-                                      random_state=42)  # Per la riproducibilità
-    df_minority_upsampled2 = resample(df_minor2,
-                                      replace=True,  # Sostituzione per permettere il campionamento ripetuto
-                                      n_samples=len(df_majority),  # Eguaglia la classe maggioritaria
-                                      random_state=42)  # Per la riproducibilità
-
-    # Unisci i dati rimanenti
-    dataset = pd.concat([df_majority, df_minority_upsampled1, df_minority_upsampled2])
-    #fau un shuffle delle righe del dataset
-    dataset = dataset.sample(frac=1).reset_index(drop=True)
-    return dataset
